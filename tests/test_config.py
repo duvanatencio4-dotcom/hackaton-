@@ -93,6 +93,11 @@ def test_pmid_pattern_matches_range() -> None:
 def test_llm_disabled_when_api_key_missing(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delenv("LLM_API_KEY", raising=False)
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    try:
+        import streamlit as st
+        monkeypatch.setattr(st, "secrets", {}, raising=False)
+    except Exception:
+        pass
     import importlib
     reloaded = importlib.reload(config)
     assert reloaded.LLM_ENABLED is False

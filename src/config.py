@@ -17,14 +17,19 @@ load_dotenv()
 
 
 def get_secret(key: str, default: str = "") -> str:
-    """Obtiene un secreto buscando en st.secrets si está disponible, luego en variables de entorno."""
+    """Obtiene un secreto buscando en variables de entorno o st.secrets si está disponible."""
+    env_val = os.getenv(key)
+    if env_val is not None and env_val.strip():
+        return env_val.strip()
     try:
         import streamlit as st
         if hasattr(st, "secrets") and key in st.secrets:
-            return str(st.secrets[key]).strip()
+            sec_val = str(st.secrets[key]).strip()
+            if sec_val:
+                return sec_val
     except Exception:
         pass
-    return os.getenv(key, default).strip()
+    return default
 
 
 # ---------------------------------------------------------------------------
